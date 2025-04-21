@@ -15,20 +15,23 @@ print("Kết quả kiểm tra:", status)
  
  #check mail
 
-import smtplib
-from email.mime.text import MIMEText
+import os
 
 def send_email(message):
-    sender = "minhthu1608@dudaji.vn"
-    password = "kuqk lhzy cqhj mdmj"  # App password chứ không phải pass thường
-    receiver = ["minhthu1608@dudaji.vn" , "huyenntt@dudaji.vn"]
+    sender = os.environ['EMAIL_USER']
+    password = os.environ['EMAIL_PASS']
+    receivers = os.environ['EMAIL_RECEIVER'].split(',')
 
-    msg = MIMEText(message)
-    msg["Subject"] = "⚠️ Cảnh báo hệ thống"
-    msg["From"] = sender
-    msg['To'] = ", ".join(receiver) 
+    from email.message import EmailMessage
+    import smtplib
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+    msg = EmailMessage()
+    msg['Subject'] = '🔴 Lỗi hệ thống!'
+    msg['From'] = sender
+    msg['To'] = ', '.join(receivers)
+    msg.set_content(message)
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
         server.login(sender, password)
         server.send_message(msg)
 
